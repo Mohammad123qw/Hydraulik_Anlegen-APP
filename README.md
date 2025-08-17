@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Artikelnummer-Manager - Extrem modernes PySide6 GUI
+Hydraulik_Rohre - Extrem modernes PySide6 GUI
 Ein elegantes, Apple-ähnliches Design mit sanften Pastelltönen und Animationen
 """
 
@@ -16,10 +16,48 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QTimer, QParallelAnimationGroup, QPoint
 from PySide6.QtGui import QFont, QPainter, QColor, QLinearGradient, QPen, QBrush, QPainterPath
 
+from PySide6.QtWidgets import QPushButton
+from PySide6.QtGui import QIcon
+from PySide6.QtCore import QSize
+from PySide6.QtGui import QPixmap
+
 
 class ElegantButton(QPushButton):
     """Elegante Button-Klasse mit Apple-ähnlichem Design"""
-    
+    def __init__(self, text: str, primary: bool = True, parent: Optional[QWidget] = None):
+        super().__init__(text, parent)
+        self.primary = primary
+
+        # Logo hinzufügen
+        self.setIcon(QIcon(r"C:\Users\admin\Desktop\Python lernen\Logo.png"))
+        self.setIconSize(QSize(24, 24))
+
+        # Styling je nach primary
+        self.setup_style()
+        self.setup_animations()
+
+    def setup_style(self):
+        if self.primary:
+            bg_color = "#2563eb"
+        else:
+            bg_color = "#e0e0e0"
+
+        self.setStyleSheet(f"""
+            QPushButton {{
+                font-family: 'SF Pro Display';
+                font-size: 16px;
+                padding: 8px 16px;
+                border-radius: 8px;
+                background-color: {bg_color};
+                color: white;
+            }}
+        """)
+
+    def setup_animations(self):
+        # Platzhalter für mögliche Hover/Click-Animationen
+        pass
+
+
     def __init__(self, text: str, primary: bool = True, parent: Optional[QWidget] = None):
         super().__init__(text, parent)
         self.primary = primary
@@ -165,6 +203,25 @@ class ElegantLineEdit(QLineEdit):
 class ElegantLabel(QLabel):
     """Elegante Label-Klasse mit Apple-ähnlichem Design"""
     
+    def __init__(self, text: str, parent=None):
+        super().__init__(text, parent)
+        
+        # Logo hinzufügen (zusätzlich zum Text)
+        self.setIcon(QIcon("logo.png"))       # Logo aus dem Python-Ordner
+        self.setIconSize(QSize(24, 24))       # Größe anpassen
+        
+        # Restliches Styling
+        self.setStyleSheet("""
+            QPushButton {
+                font-family: 'SF Pro Display';
+                font-size: 16px;
+                padding: 8px 16px;
+                border-radius: 8px;
+                background-color: #2563eb;
+                color: white;
+            }
+        """)
+    
     def __init__(self, text: str, size: str = "medium", parent: Optional[QWidget] = None):
         super().__init__(text, parent)
         self.size = size
@@ -227,7 +284,7 @@ class InteractiveBackground(QWidget):
                 'size': random.uniform(2, 8),
                 'speed_x': random.uniform(-0.5, 0.5),
                 'speed_y': random.uniform(-0.3, 0.3),
-                'opacity': random.uniform(0.1, 0.3),
+                'opacity': random.uniform(0.2, 0.8),  # kleine Kreise
                 'color': self.get_random_pastel_color(),
                 'rotation': random.uniform(0, 360),
                 'rotation_speed': random.uniform(-1, 1)
@@ -243,7 +300,7 @@ class InteractiveBackground(QWidget):
                 'size': random.uniform(20, 60),
                 'speed_x': random.uniform(-0.3, 0.3),
                 'speed_y': random.uniform(-0.2, 0.2),
-                'opacity': random.uniform(0.05, 0.15),
+                'opacity': random.uniform(0.3, 0.6),
                 'color': self.get_random_pastel_color(),
                 'rotation': random.uniform(0, 360),
                 'rotation_speed': random.uniform(-0.5, 0.5),
@@ -260,7 +317,7 @@ class InteractiveBackground(QWidget):
                 'size': random.uniform(100, 300),
                 'speed_x': random.uniform(-0.1, 0.1),
                 'speed_y': random.uniform(-0.05, 0.05),
-                'opacity': random.uniform(0.02, 0.08),
+                'opacity': random.uniform(0.1, 0.3),
                 'color1': self.get_random_pastel_color(),
                 'color2': self.get_random_pastel_color(),
                 'rotation': random.uniform(0, 360),
@@ -272,12 +329,12 @@ class InteractiveBackground(QWidget):
         """Zufällige, sanfte Pastellfarbe generieren"""
         # Sanfte Pastelltöne in Blau, Grün und Lila
         colors = [
-            QColor(147, 197, 253, 50),  # Sanftes Blau
-            QColor(167, 243, 208, 50),  # Sanftes Grün
-            QColor(196, 181, 253, 50),  # Sanftes Lila
-            QColor(254, 215, 170, 50),  # Sanftes Orange
-            QColor(252, 196, 25, 50),   # Sanftes Gelb
-            QColor(248, 113, 113, 50),  # Sanftes Rot
+            QColor(147, 197, 253, 200),  # Sanftes Blau
+            QColor(167, 243, 208, 200),  # Sanftes Grün
+            QColor(196, 181, 253, 200),  # Sanftes Lila
+            QColor(254, 215, 170, 200),  # Sanftes Orange
+            QColor(252, 196, 25, 200),   # Sanftes Gelb
+            QColor(248, 113, 113, 200),  # Sanftes Rot
         ]
         return random.choice(colors)
     
@@ -323,16 +380,16 @@ class InteractiveBackground(QWidget):
             
             if distance < 150:  # Einflussbereich der Maus
                 # Partikel leicht zur Maus hin bewegen
-                influence = (150 - distance) / 150 * 0.3
-                dx = (self.mouse_pos.x() - particle['x']) * influence * 0.01
-                dy = (self.mouse_pos.y() - particle['y']) * influence * 0.01
+                influence = (150 - distance) / 150 * 0.8
+                dx = (self.mouse_pos.x() - particle['x']) * influence * 0.05
+                dy = (self.mouse_pos.y() - particle['y']) * influence * 0.05
                 
                 particle['speed_x'] += dx
                 particle['speed_y'] += dy
                 
                 # Geschwindigkeit begrenzen
-                particle['speed_x'] = max(-1, min(1, particle['speed_x']))
-                particle['speed_y'] = max(-1, min(1, particle['speed_y']))
+                particle['speed_x'] = max(-3, min(3, particle['speed_x']))
+                particle['speed_y'] = max(-3, min(3, particle['speed_y']))
         
         # Widget neu zeichnen
         self.update()
@@ -738,21 +795,38 @@ class MainWindow(QMainWindow):
         layout.setContentsMargins(48, 48, 48, 48)
         
         # Titel für den linken Bereich
-        title = ElegantLabel("Artikelnummer-Manager", "large")
+        title = ElegantLabel("Hydraulik Rohre", "large")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(title)
-        
-        # Flexibler Platz oben
+            # Flexibler Platz oben
         layout.addStretch()
+        # Logo unter dem Titel
+        logo_label = QLabel()
+        logo_pixmap = QPixmap(r"C:\Users\admin\Desktop\Python lernen\Logo.png")
+        logo_pixmap = logo_pixmap.scaled(180, 180, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        logo_label.setPixmap(logo_pixmap)
+        logo_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        logo_label.setStyleSheet("border: none; background: transparent;")  # Kein Rahmen, transparenter Hintergrund
+        layout.addWidget(logo_label)
+
+    
         
-        # Artikelnummer-Label
-        article_label = ElegantLabel("Artikelnummer:", "medium")
-        layout.addWidget(article_label)
+  
         
         # Artikelnummer-Eingabefeld
         self.article_input = ElegantLineEdit("Artikelnummer eingeben...")
+        self.article_input.setMinimumWidth(300)   # Mindestbreite, z.B. 300px
+        self.article_input.setMaximumWidth(400)   # Optional Maximalbreite
         self.article_input.textChanged.connect(self.on_article_changed)
-        layout.addWidget(self.article_input)
+
+        # In einem horizontalen Layout zentrieren
+        input_layout = QHBoxLayout()
+        input_layout.addStretch()               
+        input_layout.addWidget(self.article_input)
+        input_layout.addStretch()               
+        layout.addLayout(input_layout)
+
+
         
         # Ablesen-Button
         self.read_button = ElegantButton("Ablesen", primary=True)
@@ -772,10 +846,7 @@ class MainWindow(QMainWindow):
         # Flexibler Platz unten
         layout.addStretch()
         
-        # Info-Text
-        info_text = ElegantLabel("Geben Sie eine Artikelnummer ein und klicken Sie auf 'Ablesen'", "small")
-        info_text.setWordWrap(True)
-        layout.addWidget(info_text, alignment=Qt.AlignmentFlag.AlignCenter)
+
         
         return article_card
     
@@ -789,7 +860,7 @@ class MainWindow(QMainWindow):
         """)
         
         # Fenster-Eigenschaften - angepasst für das neue Layout
-        self.setWindowTitle("Artikelnummer-Manager")
+        self.setWindowTitle("Hydraulik_Rohre")
         self.setMinimumSize(1000, 700)  # Reduziert von 1400x900 auf 1000x700
         self.resize(1200, 800)  # Reduziert von 1600x1000 auf 1200x800
         
@@ -943,7 +1014,7 @@ def main():
     app = QApplication(sys.argv)
     
     # Anwendungseigenschaften setzen
-    app.setApplicationName("Artikelnummer-Manager")
+    app.setApplicationName("Hydraulik_Rohre")
     app.setApplicationVersion("2.0")
     app.setOrganizationName("Meine Firma")
     
